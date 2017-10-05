@@ -17,15 +17,15 @@ export default {
       bannerImages: [
         {
           'link': 'https://pro.m.jd.com/mall/active/Zen6RsFGjG8kCYRXsXcAxbFKXfu/index.html',
-          'img': '../../../static/1.jpg'
+          'img': 'static/1.jpg'
         },
         {
           'link': 'https://pro.m.jd.com/mall/active/3GxG1uWbootpZdHcWE2Wv7qMH2ac/index.html',
-          'img': '../../../static/2.jpg'
+          'img': 'static/2.jpg'
         },
         {
           'link': 'https://sale.jd.com/act/S2udRrNCGVnptb.html?cpdad=1DLSUE',
-          'img': '../../../static/3.jpg'
+          'img': 'static/3.jpg'
         }
       ]
     }

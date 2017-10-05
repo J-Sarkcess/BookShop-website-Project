@@ -10,14 +10,17 @@
     <div class="navMenu">
         <a @click="toggleMenu"><span v-text="isShowMenu ? '折叠': '展开'"></span></a>
     </div>
-    <div class="bookMenu" v-if="isShowMenu" @click="toggleMenu">
-      <div class="menuList">
-        <p>为你精选以下标签</p>
-        <div class="menuBox">
-          <a v-for="(item, index) in bookList" :key="index" v-text="item.catalog" :class="{selectedMenu: active === index.toString()}" @click="select(index)"></a>
+    <transition name="menu" mode="out-in">
+      <div class="bookMenu" v-if="isShowMenu" @click="toggleMenu">
+        <div class="menuList">
+          <p>为你精选以下标签</p>
+          <div class="menuBox">
+            <a v-for="(item, index) in bookList" :key="index" v-text="item.catalog" :class="{selectedMenu: active === index.toString()}" @click="select(index)"></a>
+          </div>
         </div>
       </div>
-    </div>
+    </transition>
+    
       
     <mt-tab-container v-model="active" class="bookslist-wrap" swipeable>
       <mt-tab-container-item :id="indexContainer.toString()" v-for="(item, indexContainer) in bookList" :key="indexContainer">
@@ -39,49 +42,49 @@
   </div>
 </template>
 <script>
-// import Mock from 'mockjs'
-
-// const mockData = Mock.mock('/g.cn/', {
-//   'result|12': [{
-//     'id|+1': 242,
-//     'catalog': '@ctitle(2, 4)'
-//   }]
-// })
-
-// const mockBookDetails = Mock.mock({
-//   'result|10': [{
-//     'title': '@ctitle(15, 25)',
-//     'catalog|1-5': '@region ',
-//     'tags|5-10': '@cword(3-8) ',
-//     'sub1': '@ctitle(5, 15)',
-//     'sub2': '@cparagraph()',
-//     'img': 'http://apis.juhe.cn/goodbook/img/379cdafe13f92d62e99388182a6d08ec.jpg',
-//     'reading': '@natural(1, 10000)人阅读',
-//     'online': '京东商城:http://book.jd.com/10483893.html 当当网:http://product.dangdang.com/product.aspx?product_id=21020821 苏宁易购:http://www.suning.com/emall/prd_10052_22001_-7_1006212_.html ',
-//     'bytime': '2013年4月28日'
-//   }]
-// })
-
 import { TabContainer, TabContainerItem } from 'mint-ui'
 
 export default {
   beforeMount () {
-    this.getDatas('http://apis.juhe.cn/goodbook/catalog', {}, 'get', (data) => {
-      this.bookList = data.body.result
+    // this.getDatas('http://apis.juhe.cn/goodbook/catalog', {}, 'get', (data) => {
+    //   this.bookList = data.body.result
+    // })
+    this.$store.dispatch('getDatas', {
+      url: 'http://apis.juhe.cn/goodbook/catalog',
+      options: {},
+      method: 'get',
+      callBack (context, data) {
+        context.commit('getBookList', data)
+      }
     })
     for (let i = 0; i < 12; i++) {
       let id = 242 + i
-      this.getDetails(id, 'get')
+      this.$store.dispatch('getDetails', {
+        id: id,
+        method: 'get'
+      })
     }
+    // for (let i = 0; i < 12; i++) {
+    //   let id = 242 + i
+    //   this.getDetails(id, 'get')
+    // }
   },
   data () {
     return {
       active: '0',
       selectedId: '242',
-      bookList: '',
-      bookDetails: [],
-      isShowMenu: false
+      isShowMenu: false,
+      pageScrollTop: 0,
+      navScrollLeft: 0
     }
+  },
+  deactivated () {
+    this.pageScrollTop = document.documentElement.scrollTop || document.body.scrollTop
+    this.navScrollLeft = document.querySelector('.nav-wrap').scrollLeft
+  },
+  activated () {
+    window.scrollTo(0, this.pageScrollTop)
+    document.querySelector('.nav-wrap').scrollLeft = this.navScrollLeft
   },
   methods: {
     toTop () {
@@ -147,6 +150,14 @@ export default {
         console.log(data)
         this['bookDetails'].push(data.body.result)
       })
+    }
+  },
+  computed: {
+    bookList () {
+      return this.$store.state.bookList
+    },
+    bookDetails () {
+      return this.$store.state.bookDetails
     }
   },
   components: {
@@ -223,6 +234,28 @@ export default {
   border-bottom: 1px solid #fff;
   box-sizing: border-box;
 }
+
+.menu-enter {
+  opacity: 0;
+}
+
+.menu-enter-to {
+  opacity: 1;
+}
+
+.menu-leave {
+  opacity: 1;
+}
+
+.menu-leave-to {
+  opacity: 0;
+}
+
+.menu-enter-active,
+.menu-leave-active {
+  transition: all 0.1s ease;
+}
+
 .bookMenu {
   background-color: rgba(100,100,100,0.5);
   height: 100%;

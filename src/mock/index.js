@@ -15,7 +15,7 @@ const bookDetailsData = {
   data: {
     'result': {
       'data|10': [{
-        'title': '@ctitle(15, 25)',
+        'title': '@ctitle(5, 15)',
         'catalog|1-5': '@region ',
         'tags|5-10': '@cword(3-8) ',
         'sub1': '@ctitle(5, 15)',

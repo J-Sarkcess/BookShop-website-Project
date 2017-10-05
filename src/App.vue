@@ -1,9 +1,11 @@
 <template>
   <div id="app">
     <mt-header fixed :title="selectedPart" class="appHeader"></mt-header>
-    <keep-alive>
-      <router-view></router-view>
-    </keep-alive>
+    <transition name="fade" mode="out-in">
+      <keep-alive>
+        <router-view></router-view>
+      </keep-alive>
+    </transition>
     <mt-tabbar v-model="selected" class="nav-tabBar" fixed>
     <mt-tab-item id="home" class="nav-tabItem">
       首页
@@ -78,4 +80,22 @@ export default {
 .nav-tabItem div{
   font-size: 24px;
 }
+
+.fade-enter {
+  opacity: 0;
+}
+.fade-enter-to {
+  opacity: 1;
+}
+.fade-leave {
+  opacity: 1;
+}
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: all 0.2s ease;
+}
+
 </style>
