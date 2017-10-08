@@ -1,92 +1,128 @@
 <template>
-  <div class="bookListPage">
-    <div class="nav-wrap">
-      <ul>
-        <li :key="index" v-for="(item, index) in bookList" v-text="item.catalog" @click="select(index)" :data-id="item.id" :class="{selected: (active === 
-  index.toString())}"></li>
-        <li></li>
-      </ul>
+  <div>
+    <div v-if="!dataLoaded">
+      <p class="loadingPage">
+        <span class="loadingText">加载中</span>
+        <mt-spinner type="double-bounce" color="rgb(38, 162, 255)" :size="20"></mt-spinner>
+      </p>
     </div>
-    <div class="navMenu">
-        <a @click="toggleMenu"><span v-text="isShowMenu ? '折叠': '展开'"></span></a>
-    </div>
-    <transition name="menu" mode="out-in">
-      <div class="bookMenu" v-if="isShowMenu" @click="toggleMenu">
-        <div class="menuList">
-          <p>为你精选以下标签</p>
-          <div class="menuBox">
-            <a v-for="(item, index) in bookList" :key="index" v-text="item.catalog" :class="{selectedMenu: active === index.toString()}" @click="select(index)"></a>
-          </div>
+    <div v-if="dataLoaded">
+      <div class="bookListPage" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
+        <div class="nav-wrap">
+          <ul>
+            <li :key="index" v-for="(item, index) in bookList" v-text="item.catalog" @click="select(index)" :data-id="item.id" :class="{selected: (active === 
+        index.toString())}"></li>
+            <li></li>
+          </ul>
         </div>
-      </div>
-    </transition>
-    
-      
-    <mt-tab-container v-model="active" class="bookslist-wrap" swipeable>
-      <mt-tab-container-item :id="indexContainer.toString()" v-for="(item, indexContainer) in bookList" :key="indexContainer">
-        <a v-for="(item, indexItem) in bookDetails[indexContainer]['data']" :key="indexItem" class="content-main">
-          <div class="content-left">
-            <img :src="item.img" alt="cover">
-          </div>
-          <div class="content-right">
-            <h3 v-text="item.title"></h3>
-            <div class="content-rightBottom">
-              <span v-text="item.reading" class="reading"></span>
-              <span class="goToBuy">点击购买</span>
+        <div class="navMenu">
+          <a @click="toggleMenu">
+            <span v-text="isShowMenu ? '折叠': '展开'"></span>
+          </a>
+        </div>
+        <transition name="menu" mode="out-in">
+          <div class="bookMenu" v-if="isShowMenu" @click="toggleMenu">
+            <div class="menuList">
+              <p>为你精选以下标签</p>
+              <div class="menuBox">
+                <a v-for="(item, index) in bookList" :key="index" v-text="item.catalog" :class="{selectedMenu: active === index.toString()}" @click="select(index)"></a>
+              </div>
             </div>
           </div>
-        </a>
-      </mt-tab-container-item>
-    </mt-tab-container>
-    
+        </transition>
+
+        <mt-tab-container v-model="active" class="bookslist-wrap" swipeable>
+          <mt-tab-container-item :id="indexContainer.toString()" v-for="(item, indexContainer) in bookList" :key="indexContainer">
+            <a v-for="(item, indexItem) in bookDetails[indexContainer]['data']" 
+            :key="indexItem" 
+            class="content-main" @click="forDetails(indexContainer, indexItem)">
+              <div class="content-left">
+                <img :src="item.img" alt="cover">
+              </div>
+              <div class="content-right">
+                <h3 v-text="item.title"></h3>
+                <div class="content-rightBottom">
+                  <span v-text="item.reading" class="reading"></span>
+                  <span class="goToBuy">点击查看</span>
+                </div>
+              </div>
+            </a>
+            <p class="loadingPage" v-show="loading">
+              <span class="loadingText">加载中</span>
+              <mt-spinner type="triple-bounce" color="rgb(38, 162, 255)" :size="15"></mt-spinner>
+            </p>
+          </mt-tab-container-item>
+        </mt-tab-container>
+      </div>
+    </div>
   </div>
+  
+  
 </template>
 <script>
-import { TabContainer, TabContainerItem } from 'mint-ui'
+import Vue from 'vue'
+import { TabContainer, TabContainerItem, InfiniteScroll, Spinner } from 'mint-ui'
+
+Vue.use(InfiniteScroll)
+Vue.component(Spinner.name, Spinner)
 
 export default {
-  beforeMount () {
+  created () {
     // this.getDatas('http://apis.juhe.cn/goodbook/catalog', {}, 'get', (data) => {
     //   this.bookList = data.body.result
     // })
-    this.$store.dispatch('getDatas', {
-      url: 'http://apis.juhe.cn/goodbook/catalog',
-      options: {},
-      method: 'get',
-      callBack (context, data) {
-        context.commit('getBookList', data)
-      }
-    })
-    for (let i = 0; i < 12; i++) {
-      let id = 242 + i
-      this.$store.dispatch('getDetails', {
-        id: id,
-        method: 'get'
+    if (!this.$store.state.bookList) {
+      this.$store.dispatch('getDatas', {
+        url: 'http://apis.juhe.cn/goodbook/catalog',
+        options: {},
+        method: 'jsonp',
+        callBack (context, data) {
+          context.commit('getBookList', data)
+        }
       })
+      for (let i = 0; i < 17; i++) {
+        let id = 242 + i
+        this.$store.dispatch('getDetails', {
+          id: id,
+          method: 'jsonp',
+          index: i
+        })
+      }
     }
-    // for (let i = 0; i < 12; i++) {
-    //   let id = 242 + i
-    //   this.getDetails(id, 'get')
-    // }
+  },
+  beforeMount () {
+    setTimeout(() => {
+      this.dataLoaded = true
+    }, 3000)
   },
   data () {
     return {
       active: '0',
-      selectedId: '242',
       isShowMenu: false,
+      navTimer: () => {},
       pageScrollTop: 0,
-      navScrollLeft: 0
+      navScrollLeft: 0,
+      loading: false,
+      loadingTimer: () => {},
+      dataLoaded: false
     }
   },
   deactivated () {
     this.pageScrollTop = document.documentElement.scrollTop || document.body.scrollTop
     this.navScrollLeft = document.querySelector('.nav-wrap').scrollLeft
+    this.loading = true
   },
   activated () {
-    window.scrollTo(0, this.pageScrollTop)
-    document.querySelector('.nav-wrap').scrollLeft = this.navScrollLeft
+    if (this.dataLoaded) {
+      window.scrollTo(0, this.pageScrollTop)
+      document.querySelector('.nav-wrap').scrollLeft = this.navScrollLeft
+      this.loading = false
+    }
   },
   methods: {
+    activeChange (active) {
+      this.$store.commit('activeChange', active)
+    },
     toTop () {
       document.body.scrollTop = 0
       document.documentElement.scrollTop = 0
@@ -106,7 +142,7 @@ export default {
       const initialLeft = oWrap.scrollLeft
       const oLiWidth = lis[0].offsetWidth
       const oLiLength = lis.length
-      const newLeft = (index - 2) < 0 ? 0 : oLiWidth * (index + 2 >= oLiLength - 1 ? oLiLength - 1 - 2 - 2 : index - 2)
+      const newLeft = (index - 2) < 0 ? 0 : oLiWidth * (index + 1 >= oLiLength ? oLiLength - 5 : index - 2)
       const stepValue = initialLeft > newLeft ? -5 : 5
       // 让页面回到顶部
       this.toTop()
@@ -124,32 +160,26 @@ export default {
     toggleMenu () {
       this.isShowMenu = !this.isShowMenu
     },
-    getDatas (url, options, method, callBack) {
-      this.$http({
-        url: url,
-        params: {
-          key: 'd89ed133151c0011a104f4082fd2ad40',
-          ...options
-        },
-        method: method
-      })
-        .then(data => {
-          // 成功的回调
-          callBack(data)
-        }, err => {
-          // 失败的回调
-          console.log(err)
+    loadMore () {
+      this.loading = true
+      const id = this.activePage
+      let pn = +this.$store.state.bookDetails[this.active]['pn']
+      console.log(pn)
+      setTimeout(() => {
+        console.log(1)
+        this.$store.dispatch('updateDetails', {
+          id: id,
+          pn: pn + 10,
+          method: 'jsonp'
         })
+        setTimeout(() => {
+          this.loading = false
+        }, 2500)
+      }, 100)
     },
-    getDetails (id, method) {
-      this.getDatas('http://apis.juhe.cn/goodbook/query', {
-        catalog_id: id,
-        pn: 0,
-        rn: 10
-      }, method, (data) => {
-        console.log(data)
-        this['bookDetails'].push(data.body.result)
-      })
+    forDetails (outterIndex, innerIndex) {
+      this.$store.commit('showBookDetails', {outterIndex, innerIndex})
+      this.$router.push({path: '/details'})
     }
   },
   computed: {
@@ -158,6 +188,9 @@ export default {
     },
     bookDetails () {
       return this.$store.state.bookDetails
+    },
+    activePage () {
+      return this.$store.getters.activePageNum + 242
     }
   },
   components: {
@@ -167,6 +200,7 @@ export default {
   watch: {
     active () {
       this.scrollAnimate(this.active)
+      this.activeChange(this.active)
     }
   }
 }
@@ -191,7 +225,7 @@ export default {
   left: 0;
   top: 80px;
   z-index: 999;
-  height: 60px;
+  height: 61px;
   background-color: white;
   border-bottom: 1px solid #ccc;
 }
@@ -282,7 +316,7 @@ export default {
 .menuBox {
   display: flex;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-wrap: wrap;
   padding: 20px 0;
@@ -293,11 +327,11 @@ export default {
   background-color: white;
   border-radius: 30px;
   border: 1px solid #aaa;
-  font-size: 20px;
-  padding: 10px;
+  font-size: 24px;
+  padding: 15px 10px;
   box-sizing: border-box;
-  margin: 0 10px 30px;
-  width: 20%;
+  margin: 0 11px 30px;
+  width: 22%;
 }
 .navMenu a {
   font-size: 24px;
@@ -313,6 +347,7 @@ export default {
   border-bottom: 1px solid #ccc;
 }
 .content-left {
+  width: 200px;
   padding: 40px 50px 30px 50px;
 }
 .content-left img {
@@ -350,6 +385,17 @@ export default {
   color: white;
   font-weight: bold;
   padding: 10px;
+}
+.loadingPage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
+  line-height: 50px;
+  font-size: 24px;
+}
+.loadingText {
+  margin-right: 20px;
 }
 </style>
 

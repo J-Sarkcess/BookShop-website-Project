@@ -3,7 +3,7 @@ import Mock from 'mockjs'
 const bookListData = {
   url: 'http://apis.juhe.cn/goodbook/catalog?key=d89ed133151c0011a104f4082fd2ad40',
   data: {
-    'result|12': [{
+    'result|17': [{
       'id|+1': 242,
       'catalog': '@ctitle(2, 4)'
     }]
@@ -25,7 +25,7 @@ const bookDetailsData = {
         'online': '京东商城:http://book.jd.com/10483893.html 当当网:http://product.dangdang.com/product.aspx?product_id=21020821 苏宁易购:http://www.suning.com/emall/prd_10052_22001_-7_1006212_.html ',
         'bytime': '2013年4月28日'
       }],
-      'pn|0-50': 0,
+      'pn': 0,
       'rn|1-30': 10
     }
   }
@@ -41,7 +41,7 @@ function mockDetailData (list) {
   let pn = 0
   let rn = 10
   let url = initUrl + '&catalog_id=' + id + '&pn=' + pn + '&rn=' + rn
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 17; i++) {
     Mock.mock(url, list.data)
     for (let j = 0; j < 30; j++) {
       Mock.mock(url, list.data)

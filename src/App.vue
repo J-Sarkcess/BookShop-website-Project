@@ -1,19 +1,21 @@
 <template>
   <div id="app">
-    <mt-header fixed :title="selectedPart" class="appHeader"></mt-header>
+    <mt-header fixed :title="selectedPart" class="appHeader">
+      <mt-button icon="back" slot="left" @click="goBack" v-if="selectedPart === '图书详情'">返回</mt-button>
+    </mt-header>
     <transition name="fade" mode="out-in">
       <keep-alive>
         <router-view></router-view>
       </keep-alive>
     </transition>
-    <mt-tabbar v-model="selected" class="nav-tabBar" fixed>
-    <mt-tab-item id="home" class="nav-tabItem">
+    <mt-tabbar v-model="selected" class="nav-tabBar" fixed v-if="selectedPart !== '图书详情'">
+    <mt-tab-item id="/home" class="nav-tabItem">
       首页
     </mt-tab-item>
-    <mt-tab-item id="books" class="nav-tabItem">
+    <mt-tab-item id="/books" class="nav-tabItem">
       发现
     </mt-tab-item>
-    <mt-tab-item id="myCenter" class="nav-tabItem">
+    <mt-tab-item id="/myCenter" class="nav-tabItem">
       我的
     </mt-tab-item>
     </mt-tabbar>
@@ -27,13 +29,18 @@ import { Header as MyHeader, Tabbar, TabItem } from 'mint-ui'
 // 导出数据
 export default {
   name: 'app',
+  created () {
+    this.selected = this.$store.state.route.fullPath
+  },
   data () {
     return {
-      selected: 'home'
+      selected: '/home'
     }
   },
   methods: {
-
+    goBack () {
+      this.$router.go(-1)
+    }
   },
   computed: {
     selectedPart () {
@@ -47,7 +54,6 @@ export default {
   },
   watch: {
     selected () {
-      this.$store.commit('select', this.selected)
       this.$router.push({path: this.selected})
     }
   }
@@ -62,7 +68,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 80px;
-  margin-bottom: 91px;
+  margin-bottom: 100px;
 }
 .appHeader {
   height: 80px;
