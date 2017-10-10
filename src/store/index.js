@@ -8,12 +8,16 @@ export default new Vuex.Store({
     bookList: '',
     bookDetails: [],
     activePage: '0',
+    isNavShow: true,
     showDetails: {
       outterIndex: 0,
       innerIndex: 0
     }
   },
   mutations: {
+    changeNavShow (state) {
+      state.isNavShow = !state.isNavShow
+    },
     activeChange (state, active) {
       state.activePage = active
     },

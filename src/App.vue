@@ -8,7 +8,7 @@
         <router-view></router-view>
       </keep-alive>
     </transition>
-    <mt-tabbar v-model="selected" class="nav-tabBar" fixed v-if="selectedPart !== '图书详情' && selectedPart !== '关于'">
+    <mt-tabbar v-model="selected" class="nav-tabBar" fixed v-if="selectedPart !== '图书详情' && selectedPart !== '关于'" v-show="isNavShow">
     <mt-tab-item id="/home" class="nav-tabItem">
       首页
     </mt-tab-item>
@@ -48,6 +48,9 @@ export default {
     },
     routePath () {
       return this.$store.state.route.fullPath
+    },
+    isNavShow () {
+      return this.$store.state.isNavShow
     }
   },
   components: {

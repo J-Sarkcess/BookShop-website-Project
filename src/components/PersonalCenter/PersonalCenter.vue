@@ -12,7 +12,7 @@
         <div class="loginDialog">
           <div><label for="username">账号</label><input id="username" type="text" placeholder="请输入手机号码" name="username" @blur="checkAccount" v-model="account" @focus="clearWarning"></div>
           <p class="warning" v-text="isShowWarning1"></p>
-          <div><label for="pwd">密码：</label><input type="password" placeholder="请输入密码" id="pwd" name="pwd"></div>
+          <div><label for="pwd">密码：</label><input type="password" placeholder="请输入密码" id="pwd" name="pwd" @focus="changeNav" @blur="changeNav" v-model="pwd"></div>
           <button class="registerButton" @click="goToRegister">注册</button>
           <button class="loginButton" @click="goToLogin">登录</button>
         </div>
@@ -33,7 +33,8 @@ export default {
       isLoginShow: false,
       isIconShow: 'more',
       account: '',
-      isShowWarning1: ''
+      isShowWarning1: '',
+      pwd: ''
     }
   },
   methods: {
@@ -46,16 +47,27 @@ export default {
       }
     },
     checkAccount () {
-      const test = /^1[3|4|5|7|8][0-9]{9}$/
-      if (!test.test(this.account)) {
-        this.isShowWarning1 = '请输入正确的手机号码'
+      this.changeNav()
+      if (this.account !== '') {
+        const test = /^1[3|4|5|7|8][0-9]{9}$/
+        if (!test.test(this.account)) {
+          this.isShowWarning1 = '请输入正确的手机号码'
+        }
       }
     },
     clearWarning () {
+      this.changeNav()
       this.isShowWarning1 = ''
+    },
+    changeNav () {
+      this.$store.commit('changeNavShow')
     },
     goToLogin () {
       if (this.isShowWarning1 !== '') {
+        return
+      }
+      if (this.account === '' || this.pwd === '') {
+        this.isShowWarning1 = '用户名或密码不能为空'
         return
       }
       this.isLoginShow = !this.isLoginShow
@@ -69,6 +81,10 @@ export default {
     },
     goToRegister () {
       if (this.isShowWarning1 !== '') {
+        return
+      }
+      if (this.account === '' || this.pwd === '') {
+        this.isShowWarning1 = '用户名或密码不能为空'
         return
       }
       this.isLoginShow = !this.isLoginShow
