@@ -31,7 +31,7 @@
           </div>
         </transition>
 
-        <mt-tab-container v-model="active" class="bookslist-wrap" swipeable>
+        <mt-tab-container v-model="active" class="bookslist-wrap">
           <mt-tab-container-item :id="indexContainer.toString()" v-for="(item, indexContainer) in bookList" :key="indexContainer">
             <a v-for="(item, indexItem) in bookDetails[indexContainer]['data']" 
             :key="indexItem" 
@@ -142,20 +142,23 @@ export default {
       const initialLeft = oWrap.scrollLeft
       const oLiWidth = lis[0].offsetWidth
       const oLiLength = lis.length
-      const newLeft = (index - 2) < 0 ? 0 : oLiWidth * (index + 1 >= oLiLength ? oLiLength - 5 : index - 2)
+      const newLeft = (index - 2) < 0 ? 0 : oLiWidth * (index + 2 >= oLiLength ? oLiLength - 5 : index - 2)
       const stepValue = initialLeft > newLeft ? -5 : 5
       // 让页面回到顶部
       this.toTop()
       // 让导航条滚动
       clearInterval(this.navTimer)
       this.navTimer = setInterval(() => {
+        console.log(1)
+        console.log('left' + oWrap.scrollLeft)
+        console.log('new' + newLeft)
         if (Math.abs(oWrap.scrollLeft - newLeft) <= Math.abs(stepValue)) {
           oWrap.scrollLeft = newLeft
           clearInterval(this.navTimer)
         } else {
           oWrap.scrollLeft += stepValue
         }
-      }, 10)
+      }, 5)
     },
     toggleMenu () {
       this.isShowMenu = !this.isShowMenu

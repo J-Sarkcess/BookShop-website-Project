@@ -108,6 +108,7 @@ export default {
   position: fixed;
   left: 0;
   top: 0;
+  z-index: 1111;
   width: 100%;
   height: 100%;
 }

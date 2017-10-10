@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <mt-header fixed :title="selectedPart" class="appHeader">
-      <mt-button icon="back" slot="left" @click="goBack" v-if="selectedPart === '图书详情'">返回</mt-button>
+      <mt-button icon="back" slot="left" @click="goBack" v-if="selectedPart === '图书详情' || selectedPart === '关于'">返回</mt-button>
     </mt-header>
     <transition name="fade" mode="out-in">
       <keep-alive>
