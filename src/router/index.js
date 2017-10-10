@@ -4,6 +4,7 @@ import HomePage from '@/components/HomePage/HomePage'
 import BookListPage from '@/components/BookListPage/BookListPage'
 import PersonalCenter from '@/components/PersonalCenter/PersonalCenter'
 import BookDetails from '@/components/BookDetails/BookDetails'
+import About from '@/components/About/About'
 
 Vue.use(Router)
 
@@ -32,6 +33,11 @@ export default new Router({
       path: '/details',
       name: 'details',
       component: BookDetails
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: About
     }
   ]
 })

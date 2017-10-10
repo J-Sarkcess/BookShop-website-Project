@@ -8,7 +8,7 @@
         <router-view></router-view>
       </keep-alive>
     </transition>
-    <mt-tabbar v-model="selected" class="nav-tabBar" fixed v-if="selectedPart !== '图书详情'">
+    <mt-tabbar v-model="selected" class="nav-tabBar" fixed v-if="selectedPart !== '图书详情' && selectedPart !== '关于'">
     <mt-tab-item id="/home" class="nav-tabItem">
       首页
     </mt-tab-item>
@@ -45,6 +45,9 @@ export default {
   computed: {
     selectedPart () {
       return this.$store.getters.selectedPart
+    },
+    routePath () {
+      return this.$store.state.route.fullPath
     }
   },
   components: {
@@ -55,6 +58,9 @@ export default {
   watch: {
     selected () {
       this.$router.push({path: this.selected})
+    },
+    routePath () {
+      this.selected = this.$store.state.route.fullPath
     }
   }
 }

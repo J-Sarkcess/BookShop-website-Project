@@ -18,7 +18,24 @@ export default new Vuex.Store({
       state.activePage = active
     },
     getBookList (state, data) {
-      state.bookList = data.body.result
+      const compare = function (prop) { // 数组排序
+        return function (obj1, obj2) {
+          var val1 = obj1[prop]
+          var val2 = obj2[prop]
+          if (!isNaN(Number(val1)) && !isNaN(Number(val2))) {
+            val1 = Number(val1)
+            val2 = Number(val2)
+          }
+          if (val1 < val2) {
+            return -1
+          } else if (val1 > val2) {
+            return 1
+          } else {
+            return 0
+          }
+        }
+      }
+      state.bookList = data.body.result.sort(compare('id'))
     },
     getBookDetails (state, payload) {
       state.bookDetails[payload.index] = payload.data.body.result
@@ -40,7 +57,8 @@ export default new Vuex.Store({
           key: 'd89ed133151c0011a104f4082fd2ad40',
           ...payload.options
         },
-        method: payload.method
+        // method: payload.method
+        method: 'get'
       })
         .then(data => {
           // 成功的回调
@@ -91,7 +109,8 @@ export default new Vuex.Store({
           pn: 0,
           rn: 10
         },
-        method: 'jsonp',
+        // method: 'jsonp',
+        method: 'get',
         callBack (contex, data) {
           context.commit('getBookDetails', {
             index: payload.index,
@@ -108,7 +127,8 @@ export default new Vuex.Store({
           pn: payload.pn,
           rn: 10
         },
-        method: 'jsonp',
+        // method: 'jsonp',
+        method: 'get',
         callBack (contex, data) {
           context.commit('updateBookDetails', data)
         }
@@ -130,6 +150,8 @@ export default new Vuex.Store({
         case '/details':
           return '图书详情'
           // break
+        case '/about':
+          return '关于'
       }
     },
     activePageNum (state) {

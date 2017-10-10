@@ -16,13 +16,13 @@ const bookDetailsData = {
     'result': {
       'data|10': [{
         'title': '@ctitle(5, 15)',
-        'catalog|1-5': '@region ',
+        'catalog|2-6': '@region ',
         'tags|5-10': '@cword(3-8) ',
         'sub1': '@ctitle(5, 15)',
         'sub2': '@cparagraph()',
         'img': 'http://apis.juhe.cn/goodbook/img/379cdafe13f92d62e99388182a6d08ec.jpg',
         'reading': '@natural(1, 10000)人阅读',
-        'online': '京东商城:http://book.jd.com/10483893.html 当当网:http://product.dangdang.com/product.aspx?product_id=21020821 苏宁易购:http://www.suning.com/emall/prd_10052_22001_-7_1006212_.html ',
+        'online': '京东商城:http://book.jd.com/10483893.html 当当网:http://product.dangdang.com/product.aspx?product_id=21020821 苏宁易购:http://www.suning.com/emall/prd_10052_22001_-7_1006212_.html 苏宁易购:http://www.suning.com/emall/prd_10052_22001_-7_1006212_.html',
         'bytime': '2013年4月28日'
       }],
       'pn': 0,

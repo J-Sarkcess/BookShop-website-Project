@@ -5,9 +5,9 @@
     </div>
     <div class="bookName" v-text="bookDetails.title"></div>
     <div class="subTitle" v-text="bookDetails.sub1"></div>
-    <div class="catalog">图书分类：<span v-for="(catalog, index) in bookDetails.catalog.split(' ')" v-text="catalog" :key="index"></span></div>
-    <div class="buyLink"><span>购买链接：</span>
-      <a :href="link.slice(link.indexOf(':') + 1)" v-for="(link, index) in bookDetails.online.split(' ')" :key="index" target="_blank">{{link.split(':')[0]}}</a>
+    <div class="catalog"><span class="catalogTitle">图书分类：</span><div class="catalogContent"><span v-for="(catalog, index) in bookDetails.catalog.split(' ')" v-text="catalog" :key="index"></span></div></div>
+    <div class="buyLink"><span class="buyLinkTitle">购买链接：</span>
+      <div class="buyLinkContent"><a :href="link.slice(link.indexOf(':') + 1)" v-for="(link, index) in bookDetails.online.split(' ')" :key="index" target="_blank">{{link.split(':')[0]}}</a></div>
     </div>
     <div class="introduction"><p>图书简介：</p>{{bookDetails.sub2}}</div>
     <div class="bottom">
@@ -28,8 +28,9 @@ export default {
   }
 }
 </script>
-<style>
+<style scoped>
 .bookImg {
+  font-size: 36px;
   padding: 20px;
   border-bottom: 1px solid #ccc;
 }
@@ -45,12 +46,25 @@ export default {
   border-bottom: 20px solid #ccc;
 }
 .catalog {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: 20px;
   text-align: left;
   font-size: 35px;
 }
-.catalog span:not(:last-child) {
-  margin-right: 20px;
+.catalogTitle {
+  flex: 1;
+}
+.catalogContent {
+  flex: 3;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.catalogContent span:not(:last-child) {
+  margin: 5px 20px 5px 0;
   font-size: 24px;
   padding: 10px 20px;
   border: 1px solid #ccc;
@@ -69,17 +83,30 @@ export default {
   margin-bottom: 20px;
 }
 .buyLink {
-  padding: 20px 0 35px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0px 20px 20px;
   font-size: 35px;
   text-align: left;
   border-bottom: 1px solid #ccc;
 }
-.buyLink a {
+.buyLinkTitle {
+  flex: 1;
+}
+.buyLinkContent {
+  flex: 3;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;  
+}
+.buyLinkContent a {
   font-size: 24px;
   color: white;
   padding: 15px 20px;
   border-radius: 30px;
-  margin-right: 20px;
+  margin: 5px 20px 5px 0;
 }
 .buyLink a:first-of-type {
   background-color: red;
@@ -89,6 +116,9 @@ export default {
 }
 .buyLink a:nth-of-type(3) {
   background-color: skyblue;
+}
+.buyLink a:nth-of-type(4) {
+  background-color: dodgerblue;
 }
 .bottom {
   display: flex;

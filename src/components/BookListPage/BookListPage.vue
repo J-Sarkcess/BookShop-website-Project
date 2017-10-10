@@ -164,13 +164,13 @@ export default {
       this.loading = true
       const id = this.activePage
       let pn = +this.$store.state.bookDetails[this.active]['pn']
-      console.log(pn)
+      // console.log(pn)
       setTimeout(() => {
-        console.log(1)
+        // console.log(1)
         this.$store.dispatch('updateDetails', {
           id: id,
-          pn: pn + 10,
-          method: 'jsonp'
+          method: 'jsonp',
+          pn: pn + 10
         })
         setTimeout(() => {
           this.loading = false
@@ -347,6 +347,7 @@ export default {
   border-bottom: 1px solid #ccc;
 }
 .content-left {
+  font-size: 36px;
   width: 200px;
   padding: 40px 50px 30px 50px;
 }

@@ -15,36 +15,36 @@
       <div class="recommended">
         <div class="recommendedTitle">强烈推荐</div>
         <div class="recommendedContent">
-          <div class="recLeft"><img :src="randomList['data'][1]['img']" alt="cover"></div>
+          <div class="recLeft" @click="forDetails(randomNum, 1)"><img :src="randomList['data'][1]['img']" alt="cover"></div>
           <div class="recRight">
-            <div><img :src="randomList['data'][4]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][3]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][5]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][6]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 4)"><img :src="randomList['data'][4]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 3)"><img :src="randomList['data'][3]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 5)"><img :src="randomList['data'][5]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 6)"><img :src="randomList['data'][6]['img']" alt="cover"></div>
           </div>
         </div>
       </div>
       <div class="recommended">
         <div class="recommendedTitle">热销图书</div>
         <div class="recommendedContent">
-          <div class="recLeft"><img :src="randomList['data'][9]['img']" alt="cover"></div>
+          <div class="recLeft" @click="forDetails(randomNum, 9)"><img :src="randomList['data'][9]['img']" alt="cover"></div>
           <div class="recRight">
-            <div><img :src="randomList['data'][4]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][7]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][8]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][6]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 2)"><img :src="randomList['data'][2]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 7)"><img :src="randomList['data'][7]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 8)"><img :src="randomList['data'][8]['img']" alt="cover"></div>
+            <div @click="forDetails(randomNum, 0)"><img :src="randomList['data'][0]['img']" alt="cover"></div>
           </div>
         </div>
       </div>
       <div class="recommended">
         <div class="recommendedTitle">经典好书</div>
         <div class="recommendedContent">
-          <div class="recLeft"><img :src="specificBookDetails['data'][1]['img']" alt="cover"></div>
+          <div class="recLeft" @click="forDetails(specificNum, 1)"><img :src="specificBookDetails['data'][1]['img']" alt="cover"></div>
           <div class="recRight">
-            <div><img :src="randomList['data'][8]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][3]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][5]['img']" alt="cover"></div>
-            <div><img :src="randomList['data'][6]['img']" alt="cover"></div>
+            <div @click="forDetails(specificNum, 8)"><img :src="randomList['data'][8]['img']" alt="cover"></div>
+            <div @click="forDetails(specificNum, 3)"><img :src="randomList['data'][3]['img']" alt="cover"></div>
+            <div @click="forDetails(specificNum, 5)"><img :src="randomList['data'][5]['img']" alt="cover"></div>
+            <div @click="forDetails(specificNum, 6)"><img :src="randomList['data'][6]['img']" alt="cover"></div>
           </div>
         </div>
       </div>
@@ -105,7 +105,15 @@ export default {
           'img': 'static/3.jpg'
         }
       ],
-      dataLoaded: false
+      dataLoaded: false,
+      randomNum: 0,
+      specificNum: 15
+    }
+  },
+  methods: {
+    forDetails (outterIndex, innerIndex) {
+      this.$store.commit('showBookDetails', { outterIndex, innerIndex })
+      this.$router.push({ path: '/details' })
     }
   },
   components: {
@@ -114,10 +122,11 @@ export default {
   },
   computed: {
     specificBookDetails () {
-      return this.$store.state.bookDetails[15]
+      return this.$store.state.bookDetails[this.specificNum]
     },
     randomList () {
-      return this.$store.state.bookDetails[Math.floor(Math.random() * 13)]
+      this.randomNum = Math.floor(Math.random() * 13)
+      return this.$store.state.bookDetails[this.randomNum]
     }
   }
 }
