@@ -160,6 +160,7 @@ export default {
   align-items: center;
 }
 .recLeft {
+  font-size: 36px;
   padding: 20px;
   flex: 1;
   box-sizing: border-box;
@@ -168,6 +169,7 @@ export default {
   width: 100%;
 }
 .recRight {
+  font-size: 24px;
   flex: 1;
   display: flex;
   flex-direction: row;
