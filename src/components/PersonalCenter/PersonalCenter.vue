@@ -10,7 +10,7 @@
     <transition name="dialog" mode="out-in">
       <div v-if="isLoginShow" class="loginBg" @click="showDialog">
         <div class="loginDialog">
-          <div><label for="username">账号</label><input id="username" type="text" placeholder="请输入手机号码" name="username" @blur="checkAccount" v-model="account" @focus="clearWarning"></div>
+          <div><label for="username">账号:</label><input id="username" type="text" placeholder="请输入手机号码" name="username" @blur="checkAccount" v-model="account" @focus="clearWarning"></div>
           <p class="warning" v-text="isShowWarning1"></p>
           <div><label for="pwd">密码：</label><input type="password" placeholder="请输入密码" id="pwd" name="pwd" @focus="changeNav" @blur="changeNav" v-model="pwd"></div>
           <button class="registerButton" @click="goToRegister">注册</button>
@@ -101,9 +101,6 @@ export default {
 </script>
 
 <style scoped>
-.PersonalCenter {
-  
-}
 .login {
   text-align: left;
   border-bottom: 10px solid #eee;

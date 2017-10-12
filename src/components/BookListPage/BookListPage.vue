@@ -68,12 +68,9 @@ Vue.component(Spinner.name, Spinner)
 
 export default {
   created () {
-    // this.getDatas('http://apis.juhe.cn/goodbook/catalog', {}, 'get', (data) => {
-    //   this.bookList = data.body.result
-    // })
     if (!this.$store.state.bookList) {
       this.$store.dispatch('getDatas', {
-        url: 'http://apis.juhe.cn/goodbook/catalog',
+        url: 'https://apis.juhe.cn/goodbook/catalog',
         options: {},
         method: 'jsonp',
         callBack (context, data) {
@@ -128,10 +125,6 @@ export default {
       document.documentElement.scrollTop = 0
     },
     select (index) {
-      // let leftValue = (id - 2) * 150
-      // document.querySelector('.nav-wrap ul').offsetLeft = 400
-      // console.log(document.querySelector('.nav-wrap ul').offsetLeft)
-      // let leftValue = (id - 2) * 150
       this.active = index.toString()
     },
     scrollAnimate (index) {
@@ -167,9 +160,7 @@ export default {
       this.loading = true
       const id = this.activePage
       let pn = +this.$store.state.bookDetails[this.active]['pn']
-      // console.log(pn)
       setTimeout(() => {
-        // console.log(1)
         this.$store.dispatch('updateDetails', {
           id: id,
           method: 'jsonp',

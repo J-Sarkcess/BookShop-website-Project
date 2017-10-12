@@ -62,6 +62,7 @@ export default new Vuex.Store({
           ...payload.options
         },
         method: payload.method
+        // 使用Get方法可以获取假数据
         // method: 'get'
       })
         .then(data => {
@@ -107,13 +108,14 @@ export default new Vuex.Store({
     },
     getDetails (context, payload) {
       context.dispatch('getDatas', {
-        url: 'http://apis.juhe.cn/goodbook/query',
+        url: 'https://apis.juhe.cn/goodbook/query',
         options: {
           catalog_id: payload.id,
           pn: 0,
           rn: 10
         },
         method: 'jsonp',
+        // 使用Get方法可以获取假数据
         // method: 'get',
         callBack (contex, data) {
           context.commit('getBookDetails', {
@@ -125,13 +127,14 @@ export default new Vuex.Store({
     },
     updateDetails (context, payload) {
       context.dispatch('getDatas', {
-        url: 'http://apis.juhe.cn/goodbook/query',
+        url: 'https://apis.juhe.cn/goodbook/query',
         options: {
           catalog_id: payload.id,
           pn: payload.pn,
           rn: 10
         },
         method: 'jsonp',
+        // 使用Get方法可以获取假数据
         // method: 'get',
         callBack (contex, data) {
           context.commit('updateBookDetails', data)

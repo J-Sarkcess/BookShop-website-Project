@@ -64,7 +64,7 @@ export default {
   created () {
     if (!this.$store.state.bookList) {
       this.$store.dispatch('getDatas', {
-        url: 'http://apis.juhe.cn/goodbook/catalog',
+        url: 'https://apis.juhe.cn/goodbook/catalog',
         options: {},
         method: 'jsonp',
         callBack (context, data) {
@@ -134,7 +134,6 @@ export default {
 <style scoped>
 .slideshow-wrap {
   height: 400px;
-  /* background-color: orangered; */
   margin-bottom: 20px;
 }
 .banner {

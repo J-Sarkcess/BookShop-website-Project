@@ -1,7 +1,7 @@
 import Mock from 'mockjs'
 
 const bookListData = {
-  url: 'http://apis.juhe.cn/goodbook/catalog?key=d89ed133151c0011a104f4082fd2ad40',
+  url: 'https://apis.juhe.cn/goodbook/catalog?key=d89ed133151c0011a104f4082fd2ad40',
   data: {
     'result|17': [{
       'id|+1': 242,
@@ -11,7 +11,7 @@ const bookListData = {
 }
 
 const bookDetailsData = {
-  url: 'http://apis.juhe.cn/goodbook/query?key=d89ed133151c0011a104f4082fd2ad40',
+  url: 'https://apis.juhe.cn/goodbook/query?key=d89ed133151c0011a104f4082fd2ad40',
   data: {
     'result': {
       'data|10': [{
