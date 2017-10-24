@@ -61,9 +61,9 @@ export default new Vuex.Store({
           key: 'd89ed133151c0011a104f4082fd2ad40',
           ...payload.options
         },
-        method: payload.method
+        // method: payload.method
         // 使用Get方法可以获取假数据
-        // method: 'get'
+        method: 'get'
       })
         .then(data => {
           // 成功的回调
@@ -114,9 +114,9 @@ export default new Vuex.Store({
           pn: 0,
           rn: 10
         },
-        method: 'jsonp',
+        // method: 'jsonp',
         // 使用Get方法可以获取假数据
-        // method: 'get',
+        method: 'get',
         callBack (contex, data) {
           context.commit('getBookDetails', {
             index: payload.index,
@@ -133,9 +133,9 @@ export default new Vuex.Store({
           pn: payload.pn,
           rn: 10
         },
-        method: 'jsonp',
+        // method: 'jsonp',
         // 使用Get方法可以获取假数据
-        // method: 'get',
+        method: 'get',
         callBack (contex, data) {
           context.commit('updateBookDetails', data)
         }
