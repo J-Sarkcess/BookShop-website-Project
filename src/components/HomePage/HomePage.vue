@@ -15,36 +15,39 @@
       <div class="recommended">
         <div class="recommendedTitle">强烈推荐</div>
         <div class="recommendedContent">
-          <div class="recLeft" @click="forDetails(randomNum, 1)"><img :src="randomList['data'][1]['img']" alt="cover"></div>
+          <a class="recLeft" :href="shopList[0]['shop_url']" :title="shopList[0]['shop_title']"><img :src="shopList[0]['pict_url']" alt="cover"><p v-text="shopList[0]['shop_title']"></p></a>
           <div class="recRight">
-            <div @click="forDetails(randomNum, 4)"><img :src="randomList['data'][4]['img']" alt="cover"></div>
-            <div @click="forDetails(randomNum, 3)"><img :src="randomList['data'][3]['img']" alt="cover"></div>
-            <div @click="forDetails(randomNum, 5)"><img :src="randomList['data'][5]['img']" alt="cover"></div>
-            <div @click="forDetails(randomNum, 6)"><img :src="randomList['data'][6]['img']" alt="cover"></div>
+            <a
+              v-for="(item, index) in shopList.slice(1,5)"
+              :key="item + index"
+              :href="item['shop_url']"
+              :title="item['shop_title']"><img :src="item['pict_url']" alt="cover"><p v-text="item['shop_title']"></p></a>
           </div>
         </div>
       </div>
       <div class="recommended">
         <div class="recommendedTitle">热销图书</div>
         <div class="recommendedContent">
-          <div class="recLeft" @click="forDetails(randomNum, 9)"><img :src="randomList['data'][9]['img']" alt="cover"></div>
+          <a class="recLeft" :href="shopList[4]['shop_url']" :title="shopList[4]['shop_title']"><img :src="shopList[4]['pict_url']" alt="cover"><p v-text="shopList[4]['shop_title']"></p></a>
           <div class="recRight">
-            <div @click="forDetails(randomNum, 2)"><img :src="randomList['data'][2]['img']" alt="cover"></div>
-            <div @click="forDetails(randomNum, 7)"><img :src="randomList['data'][7]['img']" alt="cover"></div>
-            <div @click="forDetails(randomNum, 8)"><img :src="randomList['data'][8]['img']" alt="cover"></div>
-            <div @click="forDetails(randomNum, 0)"><img :src="randomList['data'][0]['img']" alt="cover"></div>
+            <a
+              v-for="(item, index) in shopList.slice(6,10)"
+              :key="item + index"
+              :href="item['shop_url']"
+              :title="item['shop_title']"><img :src="item['pict_url']" alt="cover"><p v-text="item['shop_title']"></p></a>
           </div>
         </div>
       </div>
       <div class="recommended">
         <div class="recommendedTitle">经典好书</div>
         <div class="recommendedContent">
-          <div class="recLeft" @click="forDetails(specificNum, 1)"><img :src="specificBookDetails['data'][1]['img']" alt="cover"></div>
+          <a class="recLeft" :href="shopList[8]['shop_url']" :title="shopList[8]['shop_title']"><img :src="shopList[8]['pict_url']" alt="cover"><p v-text="shopList[8]['shop_title']"></p></a>
           <div class="recRight">
-            <div @click="forDetails(specificNum, 8)"><img :src="randomList['data'][8]['img']" alt="cover"></div>
-            <div @click="forDetails(specificNum, 3)"><img :src="randomList['data'][3]['img']" alt="cover"></div>
-            <div @click="forDetails(specificNum, 5)"><img :src="randomList['data'][5]['img']" alt="cover"></div>
-            <div @click="forDetails(specificNum, 6)"><img :src="randomList['data'][6]['img']" alt="cover"></div>
+            <a
+              v-for="(item, index) in shopList.slice(2,6)"
+              :key="item + index"
+              :href="item['shop_url']"
+              :title="item['shop_title']"><img :src="item['pict_url']" alt="cover"><p v-text="item['shop_title']"></p></a>
           </div>
         </div>
       </div>
@@ -80,6 +83,7 @@ export default {
         })
       }
     }
+    !sessionStorage.getItem('shopList') && this.getTOPItem();
   },
   beforeMount () {
     setTimeout(() => {
@@ -105,6 +109,7 @@ export default {
           'img': 'static/3.jpg'
         }
       ],
+      shopList: sessionStorage.getItem('shopList') ? JSON.parse(sessionStorage.getItem('shopList')) : [],
       dataLoaded: false,
       randomNum: 0,
       specificNum: 15
@@ -114,6 +119,17 @@ export default {
     forDetails (outterIndex, innerIndex) {
       this.$store.commit('showBookDetails', { outterIndex, innerIndex })
       this.$router.push({ path: '/details' })
+    },
+    getTOPItem () {
+      this.$fetchTOP({
+        method: 'taobao.tbk.shop.get',
+        fields: 'user_id,shop_title,shop_type,seller_nick,pict_url,shop_url',
+        q: '女装',
+        cat: '16',
+      }).then(res => {
+        this.shopList = res.data.tbk_shop_get_response.results.n_tbk_shop
+        sessionStorage.setItem('shopList', JSON.stringify(this.shopList));
+      })
     }
   },
   components: {
@@ -176,6 +192,7 @@ export default {
   align-items: center;
   flex-wrap: wrap;
 }
+.recRight a,
 .recRight div {
   width: 50%;
   box-sizing: border-box;

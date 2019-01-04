@@ -10,9 +10,12 @@ import store from './store'
 import { sync } from 'vuex-router-sync'
 import VueResource from 'vue-resource'
 import './mock'
+import fetchTOP from '@/utils/fetchTOP'
 
 Vue.use(MintUI)
 Vue.use(VueResource)
+
+Vue.prototype.$fetchTOP = fetchTOP
 
 sync(store, router)
 

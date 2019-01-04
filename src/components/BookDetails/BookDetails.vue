@@ -1,15 +1,21 @@
 <template>
   <div class="bookDetails">
     <div class="bookImg">
-      <img :src="bookDetails.img" alt="cover">
+      <img :src="bookDetails.pict_url" alt="cover">
+    </div>
+    <div style="font-size: 12px;text-align: left;">
+      <div v-text="`商品原价：${bookDetails.reserve_price}`"></div>
+      <div v-text="`商品折扣价：${bookDetails.zk_final_price}`"></div>
     </div>
     <div class="bookName" v-text="bookDetails.title"></div>
-    <div class="subTitle" v-text="bookDetails.sub1"></div>
-    <div class="catalog"><span class="catalogTitle">图书分类：</span><div class="catalogContent"><span v-for="(catalog, index) in bookDetails.catalog.split(' ')" v-text="catalog" :key="index"></span></div></div>
+    <!-- <div class="subTitle" v-text="bookDetails.sub1"></div> -->
+    <!-- <div class="catalog"><span class="catalogTitle">图书分类：</span><div class="catalogContent"><span v-for="(catalog, index) in bookDetails.catalog.split(' ')" v-text="catalog" :key="index"></span></div></div> -->
+    <div v-text="`月销量：${bookDetails.volume}`" style="text-align: right;font-size: 12px;"></div>
     <div class="buyLink"><span class="buyLinkTitle">购买链接：</span>
-      <div class="buyLinkContent"><a :href="link.slice(link.indexOf(':') + 1)" v-for="(link, index) in bookDetails.online.split(' ')" :key="index" target="_blank">{{link.split(':')[0]}}</a></div>
+      <div class="buyLinkContent"><a :href="bookDetails.item_url" target="_blank">点击购买</a></div>
     </div>
-    <div class="introduction"><p>图书简介：</p>{{bookDetails.sub2}}</div>
+    <div class="shop_detail" v-text="`店铺名称：${bookDetails.nick}`" @click="toStore(bookDetails.seller_id)"></div>
+    <div class="introduction" v-if="bookDetails.small_images"><p>商品详情</p><img :src="item" alt="" v-for="(item, index) in bookDetails.small_images.string" :key="index + item"></div>
     <div class="bottom">
         <p>----到底了哦----</p>
     </div>
@@ -19,12 +25,34 @@
 export default {
   data () {
     return {
-      bookDetails: this.$store.state.bookDetails[this.$store.state.showDetails.outterIndex]['data'][this.$store.state.showDetails.innerIndex]
+      bookDetails: ''
     }
   },
   activated () {
     window.scrollTo(0, 0)
-    this.bookDetails = this.$store.state.bookDetails[this.$store.state.showDetails.outterIndex]['data'][this.$store.state.showDetails.innerIndex]
+    this.getItemDetail();
+  },
+  created() {
+    this.getItemDetail();
+  },
+  computed: {
+    num_iid() {
+      return this.$route.query.id
+    }
+  },
+  methods: {
+    getItemDetail() {
+      this.$fetchTOP({
+        method: 'taobao.tbk.item.info.get',
+        platform: 2,
+        num_iids: this.num_iid,
+      }).then( res => {
+        this.bookDetails = res.data.tbk_item_info_get_response.results.n_tbk_item[0]
+      })
+    },
+    toStore(id) {
+      window.location.href = `http://store.taobao.com/shop/view_shop.htm?user_number_id=${id}`
+    }
   }
 }
 </script>
@@ -34,10 +62,13 @@ export default {
   padding: 20px;
   border-bottom: 1px solid #ccc;
 }
+.bookImg img {
+  width: 100%;
+}
 .bookName {
   padding: 20px;
   text-align: left;
-  font-size: 50px;
+  font-size: 30px;
 }
 .subTitle {
   padding: 0 20px 20px;
@@ -77,6 +108,9 @@ export default {
   font-size: 30px;
   line-height: 40px;
 }
+.introduction img {
+  width: 100%;
+}
 .introduction p {
   margin-left: -20px;
   font-size: 35px;
@@ -99,7 +133,7 @@ export default {
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  flex-wrap: wrap;  
+  flex-wrap: wrap;
 }
 .buyLinkContent a {
   font-size: 24px;

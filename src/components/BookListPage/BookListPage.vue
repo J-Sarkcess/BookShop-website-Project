@@ -10,7 +10,7 @@
       <div class="bookListPage" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
         <div class="nav-wrap">
           <ul>
-            <li :key="index" v-for="(item, index) in bookList" v-text="item.catalog" @click="select(index)" :data-id="item.id" :class="{selected: (active === 
+            <li :key="index" v-for="(item, index) in bookList" v-text="item.catalog" @click="select(index)" :data-id="item.id" :class="{selected: (active ===
         index.toString())}"></li>
             <li></li>
           </ul>
@@ -33,21 +33,23 @@
 
         <mt-tab-container v-model="active" class="bookslist-wrap">
           <mt-tab-container-item :id="indexContainer.toString()" v-for="(item, indexContainer) in bookList" :key="indexContainer">
-            <a v-for="(item, indexItem) in bookDetails[indexContainer]['data']" 
-            :key="indexItem" 
-            class="content-main" @click="forDetails(indexContainer, indexItem)">
+            <a
+            v-for="(item, indexItem) in itemList"
+            :key="indexItem"
+            class="content-main"
+            @click="forDetails(item.num_iid)">
               <div class="content-left">
-                <img :src="item.img" alt="cover">
+                <img :src="item.pict_url" alt="cover">
               </div>
               <div class="content-right">
                 <h3 v-text="item.title"></h3>
                 <div class="content-rightBottom">
-                  <span v-text="item.reading" class="reading"></span>
-                  <span class="goToBuy">点击查看</span>
+                  <span v-text="item.zk_final_price" class="reading"></span>
+                  <span class="goToBuy">点击购买</span>
                 </div>
               </div>
             </a>
-            <p class="loadingPage" v-show="loading">
+            <p class="loadingPage" v-show="false">
               <span class="loadingText">加载中</span>
               <mt-spinner type="triple-bounce" color="rgb(38, 162, 255)" :size="15"></mt-spinner>
             </p>
@@ -56,8 +58,8 @@
       </div>
     </div>
   </div>
-  
-  
+
+
 </template>
 <script>
 import Vue from 'vue'
@@ -86,6 +88,7 @@ export default {
         })
       }
     }
+    !sessionStorage.getItem('itemList') && this.getTOPItem();
   },
   beforeMount () {
     setTimeout(() => {
@@ -101,7 +104,8 @@ export default {
       navScrollLeft: 0,
       loading: false,
       loadingTimer: () => {},
-      dataLoaded: false
+      dataLoaded: false,
+      itemList: sessionStorage.getItem('itemList') ? JSON.parse(sessionStorage.getItem('itemList')) : [],
     }
   },
   deactivated () {
@@ -117,6 +121,17 @@ export default {
     }
   },
   methods: {
+    getTOPItem () {
+      this.$fetchTOP({
+        method: 'taobao.tbk.item.get',
+        fields: 'num_iid,title,pict_url,small_images,reserve_price,zk_final_price,user_type,provcity,item_url,seller_id,volume,nick',
+        q: '女装',
+        cat: '16',
+      }).then(res => {
+        this.itemList = res.data.tbk_item_get_response.results.n_tbk_item
+        sessionStorage.setItem('itemList', JSON.stringify(this.itemList));
+      })
+    },
     activeChange (active) {
       this.$store.commit('activeChange', active)
     },
@@ -171,9 +186,10 @@ export default {
         }, 2500)
       }, 100)
     },
-    forDetails (outterIndex, innerIndex) {
-      this.$store.commit('showBookDetails', {outterIndex, innerIndex})
-      this.$router.push({path: '/details'})
+    forDetails (num_iids) {
+      const id = num_iids;
+      // this.$store.commit('showBookDetails', {outterIndex, innerIndex})
+      this.$router.push({path: '/details', query: {id}})
     }
   },
   computed: {
