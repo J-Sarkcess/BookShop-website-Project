@@ -84,6 +84,7 @@ export default {
       }
     }
     !sessionStorage.getItem('shopList') && this.getTOPItem();
+    this.getCoupon();
   },
   beforeMount () {
     setTimeout(() => {
@@ -116,6 +117,14 @@ export default {
     }
   },
   methods: {
+    getCoupon() {
+      this.$fetchTOP({
+        method: 'taobao.tbk.dg.item.coupon.get',
+        adzone_id: '82907350082',
+      }).then(res => {
+        console.log(res)
+      })
+    },
     forDetails (outterIndex, innerIndex) {
       this.$store.commit('showBookDetails', { outterIndex, innerIndex })
       this.$router.push({ path: '/details' })

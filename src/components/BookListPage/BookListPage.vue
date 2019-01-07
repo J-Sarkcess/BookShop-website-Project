@@ -10,7 +10,7 @@
       <div class="bookListPage" v-infinite-scroll="loadMore" infinite-scroll-disabled="loading" infinite-scroll-distance="10">
         <div class="nav-wrap">
           <ul>
-            <li :key="index" v-for="(item, index) in bookList" v-text="item.catalog" @click="select(index)" :data-id="item.id" :class="{selected: (active ===
+            <li :key="index" v-for="(item, index) in navList" v-text="item.favorites_title" @click="select(index, item.favorites_id)" :data-id="item.id" :class="{selected: (active ===
         index.toString())}"></li>
             <li></li>
           </ul>
@@ -25,7 +25,7 @@
             <div class="menuList">
               <p>为你精选以下标签</p>
               <div class="menuBox">
-                <a v-for="(item, index) in bookList" :key="index" v-text="item.catalog" :class="{selectedMenu: active === index.toString()}" @click="select(index)"></a>
+                <a v-for="(item, index) in navList" :key="index" v-text="item.favorites_title" :class="{selectedMenu: active === index.toString()}" @click="select(index, item.favorites_id)"></a>
               </div>
             </div>
           </div>
@@ -88,7 +88,10 @@ export default {
         })
       }
     }
-    !sessionStorage.getItem('itemList') && this.getTOPItem();
+    this.getTOPItem();
+    !sessionStorage.getItem('navList') && this.getSelectedItem();
+    // this.getSelectedItemDetail(19052746);
+    // this.getAllCat();
   },
   beforeMount () {
     setTimeout(() => {
@@ -105,7 +108,8 @@ export default {
       loading: false,
       loadingTimer: () => {},
       dataLoaded: false,
-      itemList: sessionStorage.getItem('itemList') ? JSON.parse(sessionStorage.getItem('itemList')) : [],
+      itemList: [],
+      navList: sessionStorage.getItem('navList') ? JSON.parse(sessionStorage.getItem('navList')) : [],
     }
   },
   deactivated () {
@@ -121,15 +125,43 @@ export default {
     }
   },
   methods: {
+    getAllCat() {
+      this.$fetchTOP({
+        method: 'taobao.itemcats.get'
+      }).then( res => {
+        console.log(res)
+      })
+    },
+    getSelectedItemDetail(favorites_id) {
+      this.$fetchTOP({
+        method: 'taobao.tbk.uatm.favorites.item.get',
+        fields: 'num_iid,title,pict_url,small_images,reserve_price,zk_final_price,user_type,provcity,item_url,seller_id,volume,nick,shop_title,zk_final_price_wap,event_start_time,event_end_time,tk_rate,status,type',
+        adzone_id: '82831000112',
+        favorites_id,
+      }).then(res => {
+        this.itemList = res.data.tbk_uatm_favorites_item_get_response.results.uatm_tbk_item;
+      })
+    },
+    getSelectedItem() {
+      this.$fetchTOP({
+        method: 'taobao.tbk.uatm.favorites.get',
+        fields: 'favorites_title,favorites_id,type',
+      }).then(res => {
+        this.navList = res.data.tbk_uatm_favorites_get_response.results.tbk_favorites
+        sessionStorage.setItem('navList', JSON.stringify(this.navList));
+      })
+    },
     getTOPItem () {
       this.$fetchTOP({
         method: 'taobao.tbk.item.get',
         fields: 'num_iid,title,pict_url,small_images,reserve_price,zk_final_price,user_type,provcity,item_url,seller_id,volume,nick',
         q: '女装',
-        cat: '16',
+        sort: 'total_sales_des',
+        start_tk_rate: '5000',
+        end_tk_rate: '1000',
       }).then(res => {
         this.itemList = res.data.tbk_item_get_response.results.n_tbk_item
-        sessionStorage.setItem('itemList', JSON.stringify(this.itemList));
+        // sessionStorage.setItem('itemList', JSON.stringify(this.itemList));
       })
     },
     activeChange (active) {
@@ -139,8 +171,9 @@ export default {
       document.body.scrollTop = 0
       document.documentElement.scrollTop = 0
     },
-    select (index) {
+    select (index, id) {
       this.active = index.toString()
+      this.getSelectedItemDetail(id)
     },
     scrollAnimate (index) {
       // 处理传入的index
